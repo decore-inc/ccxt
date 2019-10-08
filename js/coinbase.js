@@ -1034,12 +1034,19 @@ module.exports = class coinbase extends Exchange {
             }
             const auth = nonce + method + fullPath + payload;
             const signature = this.hmac (this.encode (auth), this.encode (this.secret));
-            headers = {
-                'CB-ACCESS-KEY': this.apiKey,
-                'CB-ACCESS-SIGN': signature,
-                'CB-ACCESS-TIMESTAMP': nonce,
-                'Content-Type': 'application/json',
-            };
+            if (this.token) {
+                headers = {
+                    'Authorization': 'Bearer ' + this.token,
+                    'Content-Type': 'application/json',
+                };
+            } else {
+                headers = {
+                    'CB-ACCESS-KEY': this.apiKey,
+                    'CB-ACCESS-SIGN': signature,
+                    'CB-ACCESS-TIMESTAMP': nonce,
+                    'Content-Type': 'application/json',
+                };
+            }
         }
         return { 'url': url, 'method': method, 'body': body, 'headers': headers };
     }
